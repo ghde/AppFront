@@ -18,7 +18,7 @@
     </select>
 
     <insert id="insertActivity" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
-        INSERT INTO af_activity (name) VALUES (#{name})
+        INSERT INTO af_activity (name) VALUES ('${name}')
     </insert>
 
 </mapper>

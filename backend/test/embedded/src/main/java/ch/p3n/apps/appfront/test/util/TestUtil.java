@@ -69,4 +69,14 @@ public class TestUtil {
         return mre;
     }
 
+    public static InterestEntity createDummyInterestEntity() {
+        final InterestEntity interestEntity = new InterestEntity();
+        interestEntity.setInterestId(UUID.randomUUID().toString());
+        interestEntity.setVerifyHash(UUID.randomUUID().toString());
+        interestEntity.setClientPushToken(UUID.randomUUID().toString());
+        interestEntity.setVisibilityType(MatchType.BLUETOOTH.getTypeId());
+        interestEntity.setVisibilityEndDate(LocalDateTime.now());
+        return interestEntity;
+    }
+
 }

@@ -106,8 +106,6 @@ public class InterestBusinessImpl extends AbstractBusiness implements InterestBu
         final Collection<ActivityEntity> activityEntities = new ArrayList<>();
         final Collection<ActivityEntity> existingActivities = activityBusiness.getActivities();
         for (final String activity : activities) {
-            validateActivityName(activity);
-
             final Optional<ActivityEntity> optional = existingActivities.stream()
                     .filter(a -> a.getName().equals(activity)).findFirst();
             if (optional.isPresent()) {
