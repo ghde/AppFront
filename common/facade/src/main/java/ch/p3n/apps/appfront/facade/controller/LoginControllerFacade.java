@@ -25,7 +25,7 @@ public class LoginControllerFacade extends BaseFacade implements LoginController
     @Override
     public Collection<ActivityDTO> postLogin(final AuthenticationDTO authenticationData) throws BusinessException {
         try {
-            final String serviceUrl = getServiceUrl("login");
+            final String serviceUrl = getServiceUrl("login", true);
             LOGGER.info("Calling postLogin service on " + serviceUrl);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(" Post-Body: " + authenticationData);

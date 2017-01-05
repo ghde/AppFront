@@ -22,7 +22,7 @@ public class ActivationControllerFacade extends BaseFacade implements Activation
     @Override
     public InterestDTO postActivate(final ActivationDTO activationData) throws BusinessException {
         try {
-            final String serviceUrl = getServiceUrl("activate");
+            final String serviceUrl = getServiceUrl("activate", false);
             LOGGER.info("Calling postActivate service on " + serviceUrl);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(" Post-Body: " + activationData);
@@ -40,7 +40,7 @@ public class ActivationControllerFacade extends BaseFacade implements Activation
     @Override
     public void postDeactivate(final ActivationDTO activationData) throws BusinessException {
         try {
-            final String serviceUrl = getServiceUrl("deactivate");
+            final String serviceUrl = getServiceUrl("deactivate", false);
             LOGGER.info("Calling postDeactivate service on " + serviceUrl);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(" Post-Body: " + activationData);

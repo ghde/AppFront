@@ -29,9 +29,9 @@ public class ActivationControllerFacadeTest {
 
     private static final InterestDTO INTEREST_DTO = new InterestDTO();
 
-    private static final String SERVICE_URL_ACTIVATE = "https://appfront.p3n.ch/rest/activate";
+    private static final String SERVICE_URL_ACTIVATE = "http://appfront.p3n.ch/rest/activate";
 
-    private static final String SERVICE_URL_DEACTIVATE = "https://appfront.p3n.ch/rest/deactivate";
+    private static final String SERVICE_URL_DEACTIVATE = "http://appfront.p3n.ch/rest/deactivate";
 
     private static final KeyPair KEY_PAIR = KeyGeneratorUtil.generateKeyPair();
 

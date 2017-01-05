@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.security.KeyPair;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -154,6 +155,44 @@ public class ActivationRestControllerIT extends AbstractRestControllerIT {
         activationDTO.setAuthentication(authenticationDTO);
 
         ACTIVATION_FACADE.postDeactivate(activationDTO);
+    }
+
+    @Test
+    public void testActivateReplay() throws Exception {
+        final AuthenticationDTO authenticationDtoRegistered = postRegisterAndDecrypt(KEY_PAIR);
+        postLoginAndDecrypt(KEY_PAIR, authenticationDtoRegistered.getClientId());
+
+        // Legitimate activity DTO
+        final ActivityDTO legitimateActivity = new ActivityDTO();
+        legitimateActivity.setName("legitimateActivity");
+
+        // Legitimate interest DTO
+        final InterestDTO interestDTO = new InterestDTO();
+        interestDTO.setInterests(Arrays.asList(legitimateActivity));
+
+        // Legitimate activation DTO
+        final ActivationDTO activationDTO = new ActivationDTO();
+        activationDTO.setAuthentication(TestUtil.createAuthDtoWithClientId(authenticationDtoRegistered.getClientId()));
+        activationDTO.setClientPushToken("PUSH_TOKEN");
+        activationDTO.setClientRandom(UUID.randomUUID().toString());
+        activationDTO.setInterest(interestDTO);
+        activationDTO.setVisibilityDuration(10);
+        activationDTO.setVisibilityType(MatchType.BLUETOOTH);
+
+        // Legitimate activation request
+        final InterestDTO createdLegitimateInterestDTO = postActivateAndDecrypt(KEY_PAIR, activationDTO);
+        activationDTO.setInterest(createdLegitimateInterestDTO);
+        Assert.assertNotNull("Interest created and not null", createdLegitimateInterestDTO);
+        Assert.assertNotNull("Interest Id not null", createdLegitimateInterestDTO.getInterestId());
+
+        // Unwanted activity DTO
+        final ActivityDTO unwantedActivity = new ActivityDTO();
+        unwantedActivity.setName("unwantedActivity");
+        interestDTO.setInterests(Arrays.asList(unwantedActivity));
+        activationDTO.setInterest(interestDTO);
+
+        // Unwanted activation request
+        postActivate(activationDTO);
     }
 
 }

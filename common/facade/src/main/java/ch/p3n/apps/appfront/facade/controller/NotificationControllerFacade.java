@@ -25,7 +25,7 @@ public class NotificationControllerFacade extends BaseFacade implements Notifica
     @Override
     public void postNotify(final ActivationDTO activationData, final String otherClientInterestId) throws BusinessException {
         try {
-            final String serviceUrl = getServiceUrl("notify/" + otherClientInterestId);
+            final String serviceUrl = getServiceUrl("notify/" + otherClientInterestId, false);
             LOGGER.info("Calling postNotify service on " + serviceUrl);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(" Post-Body: " + activationData);
@@ -39,7 +39,7 @@ public class NotificationControllerFacade extends BaseFacade implements Notifica
     @Override
     public Collection<MatchDTO> postNotifications(final ActivationDTO activationData) throws BusinessException {
         try {
-            final String serviceUrl = getServiceUrl("notifications");
+            final String serviceUrl = getServiceUrl("notifications", false);
             LOGGER.info("Calling postNotifications service on " + serviceUrl);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(" Post-Body: " + activationData);

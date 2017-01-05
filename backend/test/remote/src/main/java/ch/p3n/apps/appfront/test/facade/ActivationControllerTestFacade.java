@@ -12,7 +12,7 @@ import ch.p3n.apps.appfront.test.util.TestUtil;
 public class ActivationControllerTestFacade extends ActivationControllerFacade {
 
     @Override
-    public String getServiceUrl(final String serviceName) {
+    public String getServiceUrl(final String serviceName, final boolean useSSL) {
         return TestUtil.url(serviceName);
     }
 

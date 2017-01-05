@@ -21,7 +21,7 @@ public class RegistrationControllerFacade extends BaseFacade implements Registra
     @Override
     public AuthenticationDTO postRegister(final AuthenticationDTO authenticationData) throws BusinessException {
         try {
-            final String serviceUrl = getServiceUrl("register");
+            final String serviceUrl = getServiceUrl("register", true);
             LOGGER.info("Calling postRegister service on " + serviceUrl);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(" Post-Body: " + authenticationData);

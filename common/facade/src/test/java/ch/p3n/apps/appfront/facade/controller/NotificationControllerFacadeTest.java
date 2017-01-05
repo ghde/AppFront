@@ -34,9 +34,9 @@ public class NotificationControllerFacadeTest {
 
     private static final String OTHER_CLIENT_INTEREST_ID = UUID.randomUUID().toString();
 
-    private static final String SERVICE_URL_NOTIFY = "https://appfront.p3n.ch/rest/notify/" + OTHER_CLIENT_INTEREST_ID;
+    private static final String SERVICE_URL_NOTIFY = "http://appfront.p3n.ch/rest/notify/" + OTHER_CLIENT_INTEREST_ID;
 
-    private static final String SERVICE_URL_NOTIFICATIONS = "https://appfront.p3n.ch/rest/notifications";
+    private static final String SERVICE_URL_NOTIFICATIONS = "http://appfront.p3n.ch/rest/notifications";
 
     private static final KeyPair KEY_PAIR = KeyGeneratorUtil.generateKeyPair();
 
