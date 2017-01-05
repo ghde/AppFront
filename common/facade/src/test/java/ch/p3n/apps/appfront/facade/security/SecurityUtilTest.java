@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Collections;
@@ -24,6 +25,16 @@ import java.util.UUID;
  */
 public class SecurityUtilTest {
 
+    @Test
+    public void test() throws Exception {
+        //LOGGER.info("Generating private/public keypair using algorithm : " + SecuritySpec.KEY_PAIR_ALGORITHM);
+
+        final KeyPairGenerator generator = KeyPairGenerator.getInstance(SecuritySpec.KEY_PAIR_ALGORITHM);
+        generator.initialize(SecuritySpec.KEY_LENGTH);
+        final KeyPair keyPair = generator.generateKeyPair();
+        System.out.println(KeyGeneratorUtil.getKeyAsString(keyPair.getPublic()));
+        System.out.println(KeyGeneratorUtil.getKeyAsString(keyPair.getPrivate()));
+    }
     @Test
     public void testCreateHash() {
         final String textToHash = "testCreateHash";
@@ -110,8 +121,6 @@ public class SecurityUtilTest {
             osPrivateKey = Files.newOutputStream(privateKeyPath);
             osPublicKey = Files.newOutputStream(publicKeyPath);
             KeyGeneratorUtil.generateKeyPair(osPrivateKey, osPublicKey);
-            IOUtils.closeQuietly(osPrivateKey);
-            IOUtils.closeQuietly(osPublicKey);
 
             // Read keypair.
             isPrivateKey = Files.newInputStream(privateKeyPath);
