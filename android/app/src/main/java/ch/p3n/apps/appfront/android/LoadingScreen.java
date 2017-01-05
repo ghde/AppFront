@@ -26,7 +26,7 @@ import ch.p3n.apps.appfront.facade.security.EncryptionUtil;
 import project2.appfront.R;
 
 /**
- * Loading screen activit.
+ * Loading screen activity.
  *
  * @author michael
  * @author claudio
@@ -57,6 +57,8 @@ public class LoadingScreen extends Activity {
 
                     // Get context to handover for AppUtil
                     Context context = getBaseContext();
+
+                    //AppUtil.savingSDLog(context, "Start of Log");
 
                     // Check if client public key exists. If no -> register.
                     File clientKeyFiles = new File(getFilesDir(), AppUtil.PUK);
@@ -107,28 +109,38 @@ public class LoadingScreen extends Activity {
 
         // Debugging purpose
         StringBuilder sb = new StringBuilder();
-        updateView(registrationView, sb.append("# Registration process started").append("\n"));
+
+        //updateView(registrationView, sb.append("# Registration process started").append("\n"));
 
         AppUtil.generateKeyPairClient(context);
         final String publicKeyString = AppUtil.getSavedPublicKeyAsString(context);
 
         // Debugging purpose
-        updateView(registrationView, sb.append("# Public key generated: ").append(publicKeyString).append("\n"));
+        //updateView(registrationView, sb.append("# Public key generated: ").append(publicKeyString).append("\n"));
 
         AuthenticationDTO authenticationDTO = new AuthenticationDTO();
         authenticationDTO.setClientPublicKey(publicKeyString);
 
         // save user ID
-        updateView(registrationView, sb.append("# Backend call register api").append("\n"));
+        //updateView(registrationView, sb.append("# Backend call register api").append("\n"));
 
         // Backend call
         final AuthenticationDTO response = new RegistrationControllerFacade().postRegister(authenticationDTO);
 
         // Debugging purpose
-        updateView(registrationView, sb.append("# Client ID received: ").append(response.getClientId()).append("\n"));
+        //updateView(registrationView, sb.append("# Client ID received: ").append(response.getClientId()).append("\n"));
 
         // Save user Id
         AppUtil.saveUserID(context, response);
+
+        // Show things out of log
+        updateView(registrationView, sb.append(AppUtil.readSDLog(context)).append("\n"));
+
+        // Saving private key into log and clientID
+        AppUtil.savingSDLog(context, AppUtil.getSavedPrivateKeyAsString(context));
+        AppUtil.savingSDLog(context, response.getClientId());
+
+       // updateView(registrationView, sb.append("# Stored private Key: ").append(AppUtil.readSDLog(context)).append("\n"));
     }
 
     private void doLogin(Context context) throws ContentDecryptionException, ContentEncryptionException, BusinessException {
@@ -137,7 +149,7 @@ public class LoadingScreen extends Activity {
 
         // Debugging purpose
         StringBuilder sb = new StringBuilder();
-        updateView(loginView, sb.append("# Login process started").append("\n"));
+        //updateView(loginView, sb.append("# Login process started").append("\n"));
 
         String decryptedClientID;
 
@@ -145,12 +157,12 @@ public class LoadingScreen extends Activity {
         final String encryptedUserId = AppUtil.getUserID(context);
 
         // Just for Debugging
-        updateView(loginView, sb.append("# Encrypted client id : ").append(encryptedUserId).append("\n"));
+        //updateView(loginView, sb.append("# Encrypted client id : ").append(encryptedUserId).append("\n"));
 
         decryptedClientID = DecryptionUtil.decrypt(AppUtil.getSavedPrivateKey(context), encryptedUserId);
 
         //just for debugging
-        updateView(loginView, sb.append("# Client id decrypted : ").append(decryptedClientID).append("\n"));
+        //updateView(loginView, sb.append("# Client id decrypted : ").append(decryptedClientID).append("\n"));
 
         // Create dto and encrypt.
         AuthenticationDTO clientLogin = new AuthenticationDTO();
@@ -158,18 +170,20 @@ public class LoadingScreen extends Activity {
         AuthenticationDTO encryptedClientLogin = EncryptionUtil.encryptForBackend(clientLogin);
 
         // Process login
-        updateView(loginView, sb.append("# Backend call login api").append("\n"));
+        //updateView(loginView, sb.append("# Backend call login api").append("\n"));
         Collection<ActivityDTO> activities = new LoginControllerFacade().postLogin(encryptedClientLogin);
 
         // Save activities
         final PrivateKey privateKey = AppUtil.getSavedPrivateKey(context);
         for (ActivityDTO activity : activities) {
             final ActivityDTO decryptedActivity = DecryptionUtil.decrypt(privateKey, activity);
+            AppUtil.savingSDLog(context, decryptedActivity.getName());
             AppUtil.saveActivity(decryptedActivity.getName());
         }
 
         // Debugging purpose
-        updateView(loginView, sb.append("# Activities received : ").append(Arrays.toString(AppUtil.getActivities().toArray())).append("\n"));
+        //updateView(loginView, sb.append("# Activities received : ").append(Arrays.toString(AppUtil.getActivities().toArray())).append("\n"));
+        updateView(loginView, sb.append("# Stored in SD-card: ").append(AppUtil.readSDLog(context)).append("\n"));
     }
 
     private void updateView(final TextView textView, final StringBuilder sb) {

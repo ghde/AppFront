@@ -1,20 +1,29 @@
 package ch.p3n.apps.appfront.android;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import ch.p3n.apps.appfront.api.dto.AuthenticationDTO;
 import ch.p3n.apps.appfront.api.dto.InterestDTO;
@@ -99,6 +108,27 @@ public class AppUtil {
         return publicKeyString;
     }
 
+    public static String getSavedPrivateKeyAsString(Context context) {
+        String privateKeyString = null;
+        FileInputStream privateKeyInputStream = null;
+        PrivateKey prvRecovered;
+
+        try {
+            privateKeyInputStream = context.openFileInput(PRK);
+            prvRecovered = KeyGeneratorUtil.getPrivateKey(privateKeyInputStream);
+            privateKeyString = KeyGeneratorUtil.getKeyAsString(prvRecovered);
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, CAUGHT_EXCEPTION, e);
+            Log.e(TAG, "private key file not found");
+        } catch (KeyFileReadException e) {
+            Log.d(TAG, CAUGHT_EXCEPTION, e);
+            Log.e(TAG, "unable to read private key");
+        } finally {
+            IOUtils.closeQuietly(privateKeyInputStream);
+        }
+        return privateKeyString;
+    }
+
     public static PrivateKey getSavedPrivateKey(Context context) {
         FileInputStream privateKeyInputStream = null;
         PrivateKey pubRecovered = null;
@@ -131,19 +161,6 @@ public class AppUtil {
         }
     }
 
-    public static void saveInterestID(Context context, InterestDTO response) {
-        FileOutputStream fos = null;
-        try {
-            fos = context.openFileOutput(IID, Context.MODE_PRIVATE);
-            IOUtils.write(response.getInterestId(), fos, Charset.defaultCharset());
-        } catch (IOException e) {
-            Log.d(TAG, CAUGHT_EXCEPTION, e);
-            Log.e(TAG, "interest id could not be written");
-        } finally {
-            IOUtils.closeQuietly(fos);
-        }
-    }
-
     public static String getUserID(Context context) {
         String userId = null;
         InputStream is = null;
@@ -160,6 +177,19 @@ public class AppUtil {
             IOUtils.closeQuietly(is);
         }
         return userId;
+    }
+
+    public static void saveInterestID(Context context, InterestDTO response) {
+        FileOutputStream fos = null;
+        try {
+            fos = context.openFileOutput(IID, Context.MODE_PRIVATE);
+            IOUtils.write(response.getInterestId(), fos, Charset.defaultCharset());
+        } catch (IOException e) {
+            Log.d(TAG, CAUGHT_EXCEPTION, e);
+            Log.e(TAG, "interest id could not be written");
+        } finally {
+            IOUtils.closeQuietly(fos);
+        }
     }
 
     public static String getInterestID(Context context) {
@@ -182,6 +212,51 @@ public class AppUtil {
 
     public static void deleteInterestID(Context context) {
         context.deleteFile(IID);
+    }
+
+    public static void savingSDLog(Context context, String logMessage) {
+
+        //Check if SD can be read
+        String state = Environment.getExternalStorageState();
+        Date date = new Date();
+
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            File file = new File(context.getExternalFilesDir(null), "log.txt");
+            try {
+               // FileOutputStream fileOutputStream = new FileOutputStream(file);
+                BufferedWriter buf = new BufferedWriter(new FileWriter(file, true));
+                buf.append(date + " " + logMessage);
+                buf.newLine();
+                buf.close();
+                } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static String readSDLog(Context context) {
+        StringBuilder readLog = new StringBuilder();
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            File file = new File(context.getExternalFilesDir(null), "log.txt");
+            try {
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+                String line;
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    readLog.append(line);
+                    readLog.append('\n');
+                }
+                bufferedReader.close();
+            } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return readLog.toString();
     }
 
 }
