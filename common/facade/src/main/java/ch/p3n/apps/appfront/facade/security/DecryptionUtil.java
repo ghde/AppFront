@@ -27,8 +27,6 @@ public class DecryptionUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DecryptionUtil.class);
 
-    private static final String CIPHER_SUITE = "RSA/ECB/OAEPPadding";
-
     private DecryptionUtil() {
         // only a private constructor as all methods are static.
     }
@@ -49,7 +47,7 @@ public class DecryptionUtil {
         String decryptedString = null;
         try {
             final byte[] bytesToDecrypt = Base64.decodeBase64(stringToDecrypt.getBytes());
-            final Cipher cipher = Cipher.getInstance(CIPHER_SUITE);
+            final Cipher cipher = Cipher.getInstance(SecuritySpec.CIPHER_SUITE);
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
             decryptedString = new String(cipher.doFinal(bytesToDecrypt));
         } catch (NoSuchAlgorithmException e) {

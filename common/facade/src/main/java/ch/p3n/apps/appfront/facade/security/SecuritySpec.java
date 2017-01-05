@@ -10,13 +10,13 @@ public final class SecuritySpec {
 
     public static final String KEY_PAIR_ALGORITHM = "RSA";
 
-    public static final int KEY_LENGTH = 2048;
+    public static final int KEY_LENGTH = 512;
 
-    public static final String CIPHER_SUITE = "RSA/ECB/OAEPPadding";
+    public static final String CIPHER_SUITE = "RSA/ECB/PKCS1Padding";
 
     public static final String RANDOM_ALGORITHM = "SHA1PRNG";
 
-    public static final String HASH_ALGORITHM = "SHA-256";
+    public static final String HASH_ALGORITHM = "MD5";
 
     private SecuritySpec() {
         // private constructor as no public/protected method available.
