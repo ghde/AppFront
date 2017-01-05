@@ -13,8 +13,11 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import ch.p3n.apps.appfront.api.dto.AuthenticationDTO;
 import ch.p3n.apps.appfront.api.dto.InterestDTO;
@@ -35,13 +38,15 @@ public class AppUtil {
 
     public static final String PUSH_TOKEN = "PSHTOK";
 
-    public static final String PRK = "file-001";
+    public static final String PRIVATE_KEY_FILE = "private_key_file";
 
-    public static final String PUK = "file-002";
+    public static final String PUBLIC_KEY_FILE = "public_key_file";
 
-    public static final String UID = "file-003";
+    public static final String ENCRYPTED_USER_ID_FILE = "file-001";
 
-    public static final String IID = "file-004";
+    public static final String ENCRYPTED_INTEREST_ID_FILE = "file-002";
+
+    public static final String DECRYPTED_INTEREST_FILE = "file-003";
 
     private static final String TAG = "AppUtil";
 
@@ -51,8 +56,26 @@ public class AppUtil {
         // Nothing to do.
     }
 
-    public static void saveActivity(String activity) {
+    public static void saveActivity(Context context, String activity) {
+        //write activity in activity collection
         activities.add(activity);
+        FileOutputStream decryptedActivities = null;
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        String activityWithDate = date + " " + activity;
+
+        try {
+            decryptedActivities = context.openFileOutput(DECRYPTED_INTEREST_FILE, Context.MODE_PRIVATE);
+            IOUtils.write(activityWithDate, decryptedActivities, Charset.defaultCharset());
+            decryptedActivities.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.e(TAG, "activities file not found");
+        } catch (IOException e) {
+            Log.e(TAG, "activities could not be written");
+            e.printStackTrace();
+        }
     }
 
     public static Collection<String> getActivities() {
@@ -64,8 +87,8 @@ public class AppUtil {
         FileOutputStream publicKeyOutputStream = null;
 
         try {
-            privateKeyOutputStream = context.openFileOutput(PRK, Context.MODE_PRIVATE);
-            publicKeyOutputStream = context.openFileOutput(PUK, Context.MODE_PRIVATE);
+            privateKeyOutputStream = context.openFileOutput(PRIVATE_KEY_FILE, Context.MODE_PRIVATE);
+            publicKeyOutputStream = context.openFileOutput(PUBLIC_KEY_FILE, Context.MODE_PRIVATE);
             KeyGeneratorUtil.generateKeyPair(privateKeyOutputStream, publicKeyOutputStream);
             privateKeyOutputStream.close();
             publicKeyOutputStream.close();
@@ -84,7 +107,7 @@ public class AppUtil {
         PublicKey pubRecovered;
 
         try {
-            publicKeyInputStream = context.openFileInput(PUK);
+            publicKeyInputStream = context.openFileInput(PUBLIC_KEY_FILE);
             pubRecovered = KeyGeneratorUtil.getPublicKey(publicKeyInputStream);
             publicKeyString = KeyGeneratorUtil.getKeyAsString(pubRecovered);
         } catch (FileNotFoundException e) {
@@ -99,12 +122,35 @@ public class AppUtil {
         return publicKeyString;
     }
 
+
+    public static String getSavedPrivateKeyAsString(Context context) {
+        String privateKeyString = null;
+        FileInputStream privateKeyInputStream = null;
+        PrivateKey prvRecovered;
+
+        try {
+            privateKeyInputStream = context.openFileInput(PRIVATE_KEY_FILE);
+            prvRecovered = KeyGeneratorUtil.getPrivateKey(privateKeyInputStream);
+            privateKeyString = KeyGeneratorUtil.getKeyAsString(prvRecovered);
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, CAUGHT_EXCEPTION, e);
+            Log.e(TAG, "private key file not found");
+        } catch (KeyFileReadException e) {
+            Log.d(TAG, CAUGHT_EXCEPTION, e);
+            Log.e(TAG, "unable to read private key");
+        } finally {
+            IOUtils.closeQuietly(privateKeyInputStream);
+        }
+        return privateKeyString;
+    }
+
+
     public static PrivateKey getSavedPrivateKey(Context context) {
         FileInputStream privateKeyInputStream = null;
         PrivateKey pubRecovered = null;
 
         try {
-            privateKeyInputStream = context.openFileInput(PRK);
+            privateKeyInputStream = context.openFileInput(PRIVATE_KEY_FILE);
             pubRecovered = KeyGeneratorUtil.getPrivateKey(privateKeyInputStream);
         } catch (FileNotFoundException e) {
             Log.d(TAG, CAUGHT_EXCEPTION, e);
@@ -121,7 +167,7 @@ public class AppUtil {
     public static void saveUserID(Context context, AuthenticationDTO response) {
         FileOutputStream fos = null;
         try {
-            fos = context.openFileOutput(UID, Context.MODE_PRIVATE);
+            fos = context.openFileOutput(ENCRYPTED_USER_ID_FILE, Context.MODE_PRIVATE);
             IOUtils.write(response.getClientId(), fos, Charset.defaultCharset());
         } catch (IOException e) {
             Log.d(TAG, CAUGHT_EXCEPTION, e);
@@ -134,7 +180,7 @@ public class AppUtil {
     public static void saveInterestID(Context context, InterestDTO response) {
         FileOutputStream fos = null;
         try {
-            fos = context.openFileOutput(IID, Context.MODE_PRIVATE);
+            fos = context.openFileOutput(ENCRYPTED_INTEREST_ID_FILE, Context.MODE_PRIVATE);
             IOUtils.write(response.getInterestId(), fos, Charset.defaultCharset());
         } catch (IOException e) {
             Log.d(TAG, CAUGHT_EXCEPTION, e);
@@ -148,7 +194,7 @@ public class AppUtil {
         String userId = null;
         InputStream is = null;
         try {
-            is = context.openFileInput(UID);
+            is = context.openFileInput(ENCRYPTED_USER_ID_FILE);
             userId = IOUtils.toString(is, Charset.defaultCharset());
         } catch (FileNotFoundException e) {
             Log.d(TAG, CAUGHT_EXCEPTION, e);
@@ -166,7 +212,7 @@ public class AppUtil {
         String userId = null;
         InputStream is = null;
         try {
-            is = context.openFileInput(IID);
+            is = context.openFileInput(ENCRYPTED_INTEREST_ID_FILE);
             userId = IOUtils.toString(is, Charset.defaultCharset());
         } catch (FileNotFoundException e) {
             Log.d(TAG, CAUGHT_EXCEPTION, e);
@@ -181,7 +227,7 @@ public class AppUtil {
     }
 
     public static void deleteInterestID(Context context) {
-        context.deleteFile(IID);
+        context.deleteFile(ENCRYPTED_INTEREST_ID_FILE);
     }
 
 }
