@@ -17,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.security.KeyPair;
+import java.util.UUID;
 
 /**
  * Integration test class for {@link InterestBusinessImpl}.
@@ -39,8 +40,9 @@ public class AuthenticationBusinessImplIT {
 
     @Test
     public void testRegister() throws Exception {
+        final String clientId = UUID.randomUUID().toString();
         final String publicKeyString = KeyGeneratorUtil.getKeyAsString(KEY_PAIR.getPublic());
-        final AuthenticationEntity registration = authenticationBusiness.createRegistration(publicKeyString);
+        final AuthenticationEntity registration = authenticationBusiness.createRegistration(clientId, publicKeyString);
         final AuthenticationEntity readRegistration = authenticationBusiness.getRegistration(registration.getClientId());
         Assert.assertNotNull("Read registration is not null", readRegistration);
         Assert.assertEquals("Client id matches", registration.getClientId(), readRegistration.getClientId());
@@ -51,7 +53,7 @@ public class AuthenticationBusinessImplIT {
         exception.expect(InvalidClientPublicKeyException.class);
         exception.expectMessage(BusinessError.INVALID_CLIENT_PUBLIC_KEY.name());
 
-        authenticationBusiness.createRegistration("ABC");
+        authenticationBusiness.createRegistration("XYZ", "ABC");
     }
 
     @Test
@@ -59,8 +61,9 @@ public class AuthenticationBusinessImplIT {
         exception.expect(InvalidClientIdException.class);
         exception.expectMessage(BusinessError.INVALID_CLIENT_ID.name());
 
+        final String clientId = UUID.randomUUID().toString();
         final String publicKeyString = KeyGeneratorUtil.getKeyAsString(KEY_PAIR.getPublic());
-        final AuthenticationEntity registration = authenticationBusiness.createRegistration(publicKeyString);
+        final AuthenticationEntity registration = authenticationBusiness.createRegistration(clientId, publicKeyString);
         authenticationBusiness.getRegistration("x-/d");
     }
 

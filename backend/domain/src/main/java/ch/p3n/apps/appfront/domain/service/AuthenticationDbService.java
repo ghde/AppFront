@@ -19,6 +19,8 @@ public class AuthenticationDbService {
 
     private static final String INSERT_AUTHENTICATION = "db.mapper.AuthenticationMapper.insertAuthentication";
 
+    private static final String UPDATE_AUTHENTICATION = "db.mapper.AuthenticationMapper.updateAuthentication";
+
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
 
@@ -31,6 +33,13 @@ public class AuthenticationDbService {
     public AuthenticationEntity createAuthentication(AuthenticationEntity authentication) {
         try (final SqlSession sqlSession = sqlSessionFactory.openSession()) {
             sqlSession.insert(INSERT_AUTHENTICATION, authentication);
+            return authentication;
+        }
+    }
+
+    public AuthenticationEntity updateAuthentication(AuthenticationEntity authentication) {
+        try (final SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            sqlSession.update(UPDATE_AUTHENTICATION, authentication);
             return authentication;
         }
     }

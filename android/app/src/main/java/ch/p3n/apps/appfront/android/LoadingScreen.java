@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Window;
 import android.widget.TextView;
@@ -116,6 +117,7 @@ public class LoadingScreen extends Activity {
         updateView(registrationView, sb.append("# Public key generated: ").append(publicKeyString).append("\n"));
 
         AuthenticationDTO authenticationDTO = new AuthenticationDTO();
+        authenticationDTO.setClientId(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
         authenticationDTO.setClientPublicKey(publicKeyString);
 
         // save user ID

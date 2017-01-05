@@ -5,7 +5,6 @@ import ch.p3n.apps.appfront.business.exception.InvalidActivityNameException;
 import ch.p3n.apps.appfront.business.exception.InvalidClientPublicKeyException;
 import ch.p3n.apps.appfront.business.exception.InvalidClientPushTokenException;
 import ch.p3n.apps.appfront.business.exception.InvalidInterestIdException;
-import ch.p3n.apps.appfront.business.service.ActivityBusiness;
 import ch.p3n.apps.appfront.business.service.AuthenticationBusiness;
 import ch.p3n.apps.appfront.business.service.InterestBusiness;
 import ch.p3n.apps.appfront.business.service.MatchRequestBusiness;
@@ -69,11 +68,11 @@ public class MatchRequestBusinessImplIT {
     }
 
     private InterestEntity storeInterest(final Collection<String> activityNames) throws InvalidClientPublicKeyException, InvalidInterestIdException, InvalidActivityNameException, InvalidClientPushTokenException {
+        final String clientId = UUID.randomUUID().toString();
         final String clientPublicKey = KeyGeneratorUtil.getKeyAsString(KEY_PAIR.getPublic());
-        final AuthenticationEntity registration = authenticationBusiness.createRegistration(clientPublicKey);
+        final AuthenticationEntity registration = authenticationBusiness.createRegistration(clientId, clientPublicKey);
 
         // Create interest.
-        final String clientId = registration.getClientId();
         final String clientRandom = UUID.randomUUID().toString();
         final String clientPushToken = Long.toString(System.currentTimeMillis());
         final int visibilityType = MatchType.BLUETOOTH.getTypeId();

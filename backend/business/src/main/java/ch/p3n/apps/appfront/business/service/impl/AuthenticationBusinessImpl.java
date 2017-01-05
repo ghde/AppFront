@@ -8,8 +8,6 @@ import ch.p3n.apps.appfront.domain.service.AuthenticationDbService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 /**
  * Default implementation of {@link AuthenticationBusiness}.
  *
@@ -23,13 +21,21 @@ public class AuthenticationBusinessImpl extends AbstractBusiness implements Auth
     private AuthenticationDbService authenticationDbService;
 
     @Override
-    public AuthenticationEntity createRegistration(final String publicKey) throws InvalidClientPublicKeyException {
+    public AuthenticationEntity createRegistration(final String clientId, final String publicKey) throws InvalidClientPublicKeyException {
         validateClientPublicKey(publicKey);
 
         final AuthenticationEntity authenticationEntity = new AuthenticationEntity();
-        authenticationEntity.setClientId(UUID.randomUUID().toString());
+        authenticationEntity.setClientId(clientId);
         authenticationEntity.setClientPublicKey(publicKey);
         return authenticationDbService.createAuthentication(authenticationEntity);
+    }
+
+    @Override
+    public AuthenticationEntity updateRegistration(final String clientId, final String publicKey) {
+        final AuthenticationEntity authenticationEntity = new AuthenticationEntity();
+        authenticationEntity.setClientId(clientId);
+        authenticationEntity.setClientPublicKey(publicKey);
+        return authenticationDbService.updateAuthentication(authenticationEntity);
     }
 
     @Override

@@ -3,6 +3,8 @@ package ch.p3n.apps.appfront.test.util;
 import ch.p3n.apps.appfront.api.dto.ActivationDTO;
 import ch.p3n.apps.appfront.api.dto.AuthenticationDTO;
 
+import java.util.UUID;
+
 /**
  * Test helper utility.
  *
@@ -27,6 +29,7 @@ public class TestUtil {
 
     public static AuthenticationDTO createAuthenticationDTO(final String publicKeyString) {
         final AuthenticationDTO authenticationDTO = new AuthenticationDTO();
+        authenticationDTO.setClientId(UUID.randomUUID().toString());
         authenticationDTO.setClientPublicKey(publicKeyString);
         return authenticationDTO;
     }

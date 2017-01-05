@@ -8,7 +8,7 @@
     <parent>
         <groupId>ch.p3n.apps.appfront</groupId>
         <artifactId>appfront-backend</artifactId>
-        <version>0.2.0-SNAPSHOT</version>
+        <version>0.2.0.m51-SNAPSHOT</version>
     </parent>
 
     <artifactId>appfront-backend-business</artifactId>

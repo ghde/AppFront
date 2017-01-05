@@ -16,11 +16,21 @@ public interface AuthenticationBusiness {
     /**
      * Method to create a new authentication entity based on a public key.
      *
+     * @param clientId client id of the app.
      * @param publicKey public key of app.
      * @return authentication entity.
      * @throws InvalidClientPublicKeyException in case client public key is invalid.
      */
-    AuthenticationEntity createRegistration(final String publicKey) throws InvalidClientPublicKeyException;
+    AuthenticationEntity createRegistration(final String clientId, final String publicKey) throws InvalidClientPublicKeyException;
+
+    /**
+     * Method to update an existing authentication entity based on a public key.
+     *
+     * @param clientId client id of the app.
+     * @param publicKey public key of app.
+     * @return authentication entity.
+     */
+    AuthenticationEntity updateRegistration(final String clientId, final String publicKey);
 
     /**
      * Method to get an existing authentication entity based on a client id.

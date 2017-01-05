@@ -18,4 +18,8 @@
         INSERT INTO af_authentication (client_id, client_public_key) VALUES (#{clientId}, #{clientPublicKey})
     </insert>
 
+    <update id="updateAuthentication">
+        UPDATE af_authentication SET client_public_key = #{clientPublicKey} WHERE client_id = #{clientId}
+    </update>
+
 </mapper>
