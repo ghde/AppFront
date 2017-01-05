@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="db.mapper.AuthenticationMapper">
+
+    <resultMap id="AuthenticationResultMap" type="Authentication">
+        <id property="id" column="id"/>
+        <result property="clientId" column="client_id"/>
+        <result property="clientPublicKey" column="client_public_key"/>
+    </resultMap>
+
+    <select id="selectAuthenticationByClientId" resultMap="AuthenticationResultMap">
+        SELECT id, client_id, client_public_key FROM af_authentication WHERE client_id = #{clientId}
+    </select>
+
+    <insert id="insertAuthentication" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO af_authentication (client_id, client_public_key) VALUES (#{clientId}, #{clientPublicKey})
+    </insert>
+
+</mapper>

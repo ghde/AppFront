@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+
+    <!-- Database connection for ticket helper -->
+    <Resource name="jdbc/Appfront" auth="Container" type="javax.sql.DataSource"
+              url="jdbc:h2:~/.appfront" driverClassName="org.h2.Driver" username="SA" password="SA"
+              maxTotal="20" maxIdle="10" description="Datasource for appfront" />
+
+</Context>

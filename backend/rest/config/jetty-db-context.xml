@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+    <New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource">
+        <Arg></Arg>
+        <Arg>java:comp/env/jdbc/Appfront</Arg>
+        <Arg>
+            <New class="org.h2.jdbcx.JdbcDataSource">
+                <Set name="Url">jdbc:h2:~/.appfront</Set>
+                <Set name="User">SA</Set>
+                <Set name="Password">SA</Set>
+            </New>
+        </Arg>
+    </New>
+</Configure>

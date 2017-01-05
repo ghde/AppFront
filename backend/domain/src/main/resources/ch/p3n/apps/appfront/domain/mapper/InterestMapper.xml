@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="db.mapper.InterestMapper">
+
+    <resultMap id="InterestResultMap" type="Interest">
+        <id property="id" column="id"/>
+        <result property="interestId" column="interest_id"/>
+        <result property="verifyHash" column="verify_hash"/>
+        <result property="clientPushToken" column="client_push_token"/>
+        <result property="visibilityType" column="visibility_type"/>
+        <result property="visibilityEndDate" column="visibility_end_date"/>
+    </resultMap>
+
+    <select id="selectInterestByInterestId" resultMap="InterestResultMap">
+        SELECT * FROM af_interest WHERE interest_id = #{interestId}
+    </select>
+
+    <select id="selectInterestWithActiveBroadcast" resultMap="InterestResultMap">
+        SELECT * FROM af_interest WHERE visibility_end_date &gt; NOW() AND visibility_type = 1
+    </select>
+
+    <insert id="insertInterest" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO af_interest (interest_id, verify_hash, client_push_token, visibility_type, visibility_end_date)
+        VALUES (#{interestId}, #{verifyHash}, #{clientPushToken}, #{visibilityType}, #{visibilityEndDate})
+    </insert>
+
+    <delete id="deleteInterestAlreadyExpired">
+        DELETE FROM af_interest WHERE visibility_end_date &lt; NOW()
+    </delete>
+
+    <delete id="deleteInterestById" parameterType="int">
+        DELETE FROM af_interest WHERE id = #{id}
+    </delete>
+
+</mapper>

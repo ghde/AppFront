@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">AppFront</string>
+    <string name="action_settings">Settings</string>
+    <string name="go_active">Activate</string>
+    <string name="go_inactive">Deactivate</string>
+    <string name="choose_interest">Choose your interest</string>
+    <string name="specify_interest">Specify your interest</string>
+    <string name="active_interests">You have the follow interest active:</string>
+    <string name="title_activity_active_interests">ActiveInterests</string>
+    <string name="loading">Loading...</string>
+</resources>

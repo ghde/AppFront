@@ -1,0 +1,26 @@
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <typeAliases>
+        <typeAlias alias="Activity" type="ch.p3n.apps.appfront.domain.entity.ActivityEntity"/>
+        <typeAlias alias="Authentication" type="ch.p3n.apps.appfront.domain.entity.AuthenticationEntity"/>
+        <typeAlias alias="InterestActivity" type="ch.p3n.apps.appfront.domain.entity.InterestActivityEntity"/>
+        <typeAlias alias="Interest" type="ch.p3n.apps.appfront.domain.entity.InterestEntity"/>
+        <typeAlias alias="MatchRequest" type="ch.p3n.apps.appfront.domain.entity.MatchRequestEntity"/>
+    </typeAliases>
+
+    <typeHandlers>
+        <typeHandler handler="ch.p3n.apps.appfront.domain.handler.LocalDateTimeHandler"/>
+    </typeHandlers>
+
+    <mappers>
+        <mapper resource="ch/p3n/apps/appfront/domain/mapper/ActivityMapper.xml"/>
+        <mapper resource="ch/p3n/apps/appfront/domain/mapper/AuthenticationMapper.xml"/>
+        <mapper resource="ch/p3n/apps/appfront/domain/mapper/InterestActivityMapper.xml"/>
+        <mapper resource="ch/p3n/apps/appfront/domain/mapper/InterestMapper.xml"/>
+        <mapper resource="ch/p3n/apps/appfront/domain/mapper/MatchRequestMapper.xml"/>
+    </mappers>
+
+</configuration>

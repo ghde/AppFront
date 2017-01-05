@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.p3n.apps.appfront</groupId>
+        <artifactId>appfront-parent</artifactId>
+        <version>0.2.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>ch.p3n.apps.appfront</groupId>
+    <artifactId>appfront-common</artifactId>
+    <version>0.2.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Appfront common</name>
+
+    <modules>
+        <module>api</module>
+        <module>facade</module>
+    </modules>
+
+    <properties>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.jacoco.reportPath>${project.build.directory}/sonar/jacoco-ut.exec</sonar.jacoco.reportPath>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

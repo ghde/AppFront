@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="db.mapper.MatchRequestMapper">
+
+    <resultMap id="MatchRequestResultMap" type="MatchRequest">
+        <id property="id" column="id"/>
+        <association property="interest" resultMap="db.mapper.InterestMapper.InterestResultMap"
+                     columnPrefix="interest_"/>
+        <association property="otherInterest" resultMap="db.mapper.InterestMapper.InterestResultMap"
+                     columnPrefix="other_interest_"/>
+    </resultMap>
+
+    <select id="selectCompletedMatchRequest" resultMap="MatchRequestResultMap">
+        SELECT
+          af_match_request.id,
+          i.interest_id AS interest_interest_id,
+          i.verify_hash AS interest_verify_hash,
+          i.client_push_token AS interest_client_push_token,
+          i.visibility_type AS interest_visibility_type,
+          i.visibility_end_date AS interest_visibility_end_date,
+          oi.interest_id AS other_interest_interest_id,
+          oi.verify_hash AS other_interest_verify_hash,
+          oi.client_push_token AS other_interest_client_push_token,
+          oi.visibility_type AS other_interest_visibility_type,
+          oi.visibility_end_date AS other_interest_visibility_end_date
+        FROM af_match_request
+        INNER JOIN af_interest i ON af_match_request.interest_id = i.id
+        INNER JOIN af_interest oi ON af_match_request.other_interest_id = oi.id
+        WHERE i.visibility_end_date &gt; NOW() AND oi.visibility_end_date &gt; NOW()
+        AND (
+          SELECT COUNT(*)
+          FROM af_match_request
+          WHERE interest_id = oi.id AND other_interest_id = i.id
+        ) = 1
+    </select>
+
+    <select id="selectMatchRequestByInterestId" resultMap="MatchRequestResultMap">
+        SELECT
+          i.interest_id AS interest_interest_id,
+          i.verify_hash AS interest_verify_hash,
+          i.client_push_token AS interest_client_push_token,
+          i.visibility_type AS interest_visibility_type,
+          i.visibility_end_date AS interest_visibility_end_date,
+          oi.interest_id AS other_interest_interest_id,
+          oi.verify_hash AS other_interest_verify_hash,
+          oi.client_push_token AS other_interest_client_push_token,
+          oi.visibility_type AS other_interest_visibility_type,
+          oi.visibility_end_date AS other_interest_visibility_end_date
+        FROM af_match_request
+        INNER JOIN af_interest i ON af_match_request.interest_id = i.id
+        INNER JOIN af_interest oi ON af_match_request.other_interest_id = oi.id
+        WHERE i.interest_id = #{interest.interestId} AND oi.interest_id = #{otherInterest.interestId}
+    </select>
+
+    <insert id="insertMatchRequest" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO af_match_request (interest_id, other_interest_id)
+        VALUES (
+          (SELECT id FROM af_interest WHERE interest_id = #{interest.interestId}),
+          (SELECT id FROM af_interest WHERE interest_id = #{otherInterest.interestId})
+        )
+    </insert>
+
+    <delete id="deleteMatchRequest">
+        DELETE FROM af_match_request WHERE id = #{id}
+    </delete>
+
+</mapper>

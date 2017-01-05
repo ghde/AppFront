@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="db.mapper.InterestActivityMapper">
+
+    <resultMap id="InterestActivityResultMap" type="InterestActivity">
+        <association property="interest" resultMap="db.mapper.InterestMapper.InterestResultMap"
+                     columnPrefix="interest_"/>
+        <association property="activity" resultMap="db.mapper.ActivityMapper.ActivityResultMap"
+                     columnPrefix="activity_"/>
+    </resultMap>
+
+    <select id="selectInterestActivityByInterestId" resultMap="InterestActivityResultMap">
+        SELECT
+          af_activity.id AS activity_id,
+          af_activity.name AS activity_name,
+          af_interest.id AS interest_id,
+          af_interest.interest_id AS interest_interest_id,
+          af_interest.verify_hash AS interest_verify_hash,
+          af_interest.client_push_token AS interest_client_push_token,
+          af_interest.visibility_type AS interest_visibility_type,
+          af_interest.visibility_end_date AS interest_visibility_end_date
+        FROM af_interest_activity
+        INNER JOIN af_activity ON af_interest_activity.activity_id = af_activity.id
+        INNER JOIN af_interest ON af_interest_activity.interest_id = af_interest.id
+        WHERE af_interest_activity.interest_id = #{interestId}
+    </select>
+
+    <select id="selectInterestActivityByActivityId" resultMap="InterestActivityResultMap">
+        SELECT
+          af_activity.id AS activity_id,
+          af_activity.name AS activity_name,
+          af_interest.id AS interest_id,
+          af_interest.interest_id AS interest_interest_id,
+          af_interest.verify_hash AS interest_verify_hash,
+          af_interest.client_push_token AS interest_client_push_token,
+          af_interest.visibility_type AS interest_visibility_type,
+          af_interest.visibility_end_date AS interest_visibility_end_date
+        FROM af_interest_activity
+        INNER JOIN af_activity ON af_interest_activity.activity_id = af_activity.id
+        INNER JOIN af_interest ON af_interest_activity.interest_id = af_interest.id
+        WHERE af_interest_activity.af_activity = #{activityId}
+    </select>
+
+    <insert id="insertInterestActivity">
+        INSERT INTO af_interest_activity (interest_id, activity_id) VALUES (#{interest.id}, #{activity.id})
+    </insert>
+
+    <delete id="deleteInterestActivityByClientId" parameterType="int">
+        DELETE FROM af_interest WHERE id = #{id}
+    </delete>
+
+</mapper>
