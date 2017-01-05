@@ -23,8 +23,6 @@ public class ActivityBusinessImpl extends AbstractBusiness implements ActivityBu
 
     @Override
     public ActivityEntity createActivity(ActivityEntity activityEntity) throws InvalidActivityNameException {
-        validateActivityName(activityEntity.getName());
-
         return activityDbService.createActivity(activityEntity);
     }
 

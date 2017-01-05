@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.security.KeyPair;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -26,6 +27,31 @@ public class ActivationRestControllerIT extends AbstractRestControllerIT {
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
+
+    @Test
+    public void testActivateDeactivate_sqlInjection() throws Exception {
+        final AuthenticationDTO authenticationDtoRegistered = postRegisterAndDecrypt(KEY_PAIR);
+        postLoginAndDecrypt(KEY_PAIR, authenticationDtoRegistered.getClientId());
+
+        final ActivityDTO activityDTO = new ActivityDTO();
+        activityDTO.setName(UUID.randomUUID() + "'); UPDATE af_interest SET visibility_type = 1; --");
+
+        final InterestDTO interestDTO = new InterestDTO();
+        interestDTO.setInterests(Arrays.asList(activityDTO));
+
+        final ActivationDTO activationDTO = new ActivationDTO();
+        activationDTO.setAuthentication(TestUtil.createAuthDtoWithClientId(authenticationDtoRegistered.getClientId()));
+        activationDTO.setClientPushToken("PUTK");
+        activationDTO.setClientRandom(UUID.randomUUID().toString());
+        activationDTO.setInterest(interestDTO);
+        activationDTO.setVisibilityDuration(10);
+        activationDTO.setVisibilityType(MatchType.BLUETOOTH);
+
+        exception.expect(BusinessException.class);
+        exception.expectMessage(BusinessError.UNKNOWN.name());
+
+        postActivateAndDecrypt(KEY_PAIR, activationDTO);
+    }
 
     @Test
     public void testActivateDeactivate() throws Exception {

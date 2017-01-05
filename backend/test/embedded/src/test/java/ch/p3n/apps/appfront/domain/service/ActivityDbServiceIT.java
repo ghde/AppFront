@@ -1,9 +1,10 @@
 package ch.p3n.apps.appfront.domain.service;
 
+import ch.p3n.apps.appfront.api.dto.MatchType;
 import ch.p3n.apps.appfront.domain.entity.ActivityEntity;
+import ch.p3n.apps.appfront.domain.entity.InterestEntity;
 import ch.p3n.apps.appfront.test.util.TestUtil;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.StringUtils;
 
 import java.util.Collection;
+import java.util.UUID;
 
 /**
  * Integration test class for {@link ActivityDbService}.
@@ -27,6 +29,33 @@ public class ActivityDbServiceIT {
 
     @Autowired
     private ActivityDbService activityDbService;
+
+    @Autowired
+    private InterestDbService interestDbService;
+
+    @Test
+    public void testCreateActivity_sqlInjection_updateVisibilityOfUsers() {
+
+        // Create sample interest entity and store in database
+        final InterestEntity interestEntity = TestUtil.createDummyInterestEntity();
+        interestDbService.createInterest(interestEntity);
+
+        // Read interest entity from database to verify if data were changed
+        final InterestEntity readInterestEntity1 = interestDbService.getInterestByInterestId(interestEntity.getInterestId());
+        Assert.assertEquals("Visibility of interest entity is changed", MatchType.BLUETOOTH.getTypeId(), readInterestEntity1.getVisibilityType());
+
+        // Create an activity with a name that contains text which causes an sql injection
+        final String injectedActivityName = UUID.randomUUID() + "'); UPDATE af_interest SET visibility_type = 1; --";
+        final ActivityEntity activityEntity = new ActivityEntity();
+        activityEntity.setName(injectedActivityName);
+
+        // SQL Query which is executed: 'INSERT INTO af_activity (name) VALUES ('${name}')'
+        activityDbService.createActivity(activityEntity);
+
+        // Read interest entity from database to verify if data were changed
+        final InterestEntity readInterestEntity2 = interestDbService.getInterestByInterestId(interestEntity.getInterestId());
+        Assert.assertEquals("Visibility of interest entity is changed", MatchType.MAP.getTypeId(), readInterestEntity2.getVisibilityType());
+    }
 
     @Test
     public void testCreateAndReadActivityEntity() {

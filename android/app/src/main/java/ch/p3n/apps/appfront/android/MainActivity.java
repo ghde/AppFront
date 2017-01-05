@@ -3,6 +3,8 @@ package ch.p3n.apps.appfront.android;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,6 +40,17 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
+    public static final InputFilter WORD_FILTER = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            String blockCharacterSet = "~#^|$%*!@/()-'\":;,?{}=!$^';,?×÷<>{}€£¥₩%~`¤♡♥_|《》¡¿°•○●□■◇◆♧♣▲▼▶◀↑↓←→☆★▪:-);-):-D:-(:'(:O 1234567890";
+            if (source != null && blockCharacterSet.contains("" + source)) {
+                return "";
+            }
+            return null;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +61,10 @@ public class MainActivity extends AppCompatActivity {
         final String[] activities = AppUtil.getActivities().toArray(new String[AppUtil.getActivities().size()]);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, activities);
         spinner.setAdapter(adapter);
+
+        // Set filter for interests
+        EditText editText = (EditText) findViewById(R.id.edit_message);
+        editText.setFilters(new InputFilter[]{WORD_FILTER});
 
         try {
             final String userId = AppUtil.getUserID(getBaseContext());

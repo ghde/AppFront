@@ -96,7 +96,7 @@ public class LoginRestControllerIT extends AbstractRestControllerIT {
         final AuthenticationDTO authenticationDtoRegistered = postRegisterAndDecrypt(KEY_PAIR);
         final Collection<ActivityDTO> resp = postLogin(authenticationDtoRegistered.getClientId());
         Assert.assertNotNull("Response is not null", resp);
-        Assert.assertEquals("Response activity contains 5 entries", 5, resp.size());
+        Assert.assertFalse("Response activity contains entries", resp.isEmpty());
     }
 
 }
