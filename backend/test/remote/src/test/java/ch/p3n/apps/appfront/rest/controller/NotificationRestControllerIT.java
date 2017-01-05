@@ -57,9 +57,6 @@ public class NotificationRestControllerIT extends AbstractRestControllerIT {
         final String interestId2 = activation2.getInterest().getInterestId();
         postNotify(activation1, interestId2);
 
-        exception.expect(BusinessException.class);
-        exception.expectMessage(BusinessError.NO_ACTIVATION_FOUND.name());
-
         // Exchange interest id in activation
         activation1.getInterest().setInterestId(interestId2);
         postNotify(activation1, interestId1);

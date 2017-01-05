@@ -80,10 +80,6 @@ public class NotificationRestController extends AbstractRestController implement
                 throw new NoActivationFoundException();
             }
 
-            interestBusiness.verifyInterestHash(interestEntity, //
-                    decryptedActivationData.getAuthentication().getClientId(), //
-                    decryptedActivationData.getClientRandom());
-
             // Get interest entity of other user
             final InterestEntity interestEntityOther = interestBusiness.getInterest(otherClientInterestId);
 
